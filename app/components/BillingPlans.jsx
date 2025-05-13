@@ -67,6 +67,7 @@ export function BillingPlans() {
         body: JSON.stringify({
           planId: selectedPlan,
         }),
+        credentials: "include",
       });
 
       const data = await response.json();
