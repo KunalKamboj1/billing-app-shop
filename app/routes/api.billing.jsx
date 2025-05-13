@@ -3,18 +3,13 @@ import { redirect } from "@remix-run/node";
 
 export const action = async ({ request }) => {
   const { admin, session } = await authenticate.admin(request);
+  const { planId, shop: shopFromBody } = await request.json();
+  const shop = session?.shop || shopFromBody;
 
-  // If session or shop is missing, redirect to login
-  if (!session || !session.shop) {
-    const url = new URL(request.url);
-    const shop = url.searchParams.get("shop");
-    if (shop) {
-      throw redirect(`/auth/login?shop=${shop}`);
-    }
-    return { error: "No valid session. Please reload the app from your Shopify admin." };
+  // If shop is missing, redirect to login or return error
+  if (!shop) {
+    return { error: "No valid shop. Please reload the app from your Shopify admin." };
   }
-
-  const { planId } = await request.json();
 
   try {
     if (planId === "one-time") {

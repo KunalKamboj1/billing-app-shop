@@ -1,11 +1,13 @@
 import { BillingPlans } from "../components/BillingPlans";
 import { authenticate } from "../shopify.server";
+import { useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
-  return null;
+  const { session } = await authenticate.admin(request);
+  return { shop: session?.shop || null };
 };
 
 export default function Index() {
-  return <BillingPlans />;
+  const { shop } = useLoaderData();
+  return <BillingPlans shop={shop} />;
 }

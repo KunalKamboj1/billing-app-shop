@@ -42,7 +42,7 @@ const plans = [
   },
 ];
 
-export function BillingPlans() {
+export function BillingPlans({ shop }) {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +66,7 @@ export function BillingPlans() {
         },
         body: JSON.stringify({
           planId: selectedPlan,
+          shop,
         }),
         credentials: "include",
       });
