@@ -9,16 +9,19 @@ export const action = async ({ request }) => {
       // Handle one-time charge
       const response = await admin.graphql(
         `#graphql
-          mutation appUsageRecordCreate($subscriptionLineItemId: ID!, $quantity: Int!) {
-            appUsageRecordCreate(
-              subscriptionLineItemId: $subscriptionLineItemId
-              quantity: $quantity
+          mutation appPurchaseOneTimeCreate($name: String!, $price: MoneyInput!, $returnUrl: URL!, $test: Boolean) {
+            appPurchaseOneTimeCreate(
+              name: $name
+              price: $price
+              returnUrl: $returnUrl
+              test: $test
             ) {
-              appUsageRecord {
+              appPurchaseOneTime {
                 id
-                quantity
-                createdAt
+                name
+                status
               }
+              confirmationUrl
               userErrors {
                 field
                 message
@@ -28,14 +31,16 @@ export const action = async ({ request }) => {
         `,
         {
           variables: {
-            subscriptionLineItemId: "one-time-setup",
-            quantity: 1,
+            name: "One-Time Setup",
+            price: { amount: "100.00", currencyCode: "USD" },
+            returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
+            test: process.env.NODE_ENV !== "production",
           },
         }
       );
 
       const responseJson = await response.json();
-      return responseJson.data.appUsageRecordCreate;
+      return responseJson.data.appPurchaseOneTimeCreate;
     } else {
       // Handle recurring subscription
       const response = await admin.graphql(

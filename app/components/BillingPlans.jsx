@@ -74,8 +74,8 @@ export function BillingPlans() {
       if (data.error) {
         setError(data.error);
       } else if (data.confirmationUrl) {
-        // Redirect to Shopify's confirmation page
-        window.location.href = data.confirmationUrl;
+        // Redirect to Shopify's confirmation page (embedded app safe)
+        window.top.location.href = data.confirmationUrl;
       } else {
         setShowSuccess(true);
       }
